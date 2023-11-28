@@ -1,10 +1,8 @@
 variable "project_id" {
-  default = var.project_id
   description = "project id"
 }
 
 variable "region" {
-  default = var.region
   description = "region"
 }
 
@@ -20,7 +18,7 @@ resource "google_compute_network" "vpc" {
 
 resource "google_compute_subnetwork" "subnet" {
   name          = "web-service-subnet"
-  region        = "us-central1"
+  region        = var.region
   network       = google_compute_network.vpc.name
   ip_cidr_range = "10.10.0.0/24"
 }
