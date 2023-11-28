@@ -4,6 +4,9 @@ module "cloud_armor" {
   name           = "web-application-security-policy"
   description    = "Basic Cloud Armor security policy for DoS protection"
   default_rule_action = "deny"
+  layer_7_ddos_defense_enable          = true
+  layer_7_ddos_defense_rule_visibility = "STANDARD"
+  log_level                            = "VERBOSE"
 
   security_rules = {
     "deny_all" = {
