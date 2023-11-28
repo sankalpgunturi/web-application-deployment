@@ -8,7 +8,7 @@ terraform {
       source  = "hashicorp/google-beta"
       version = ">= 4.79.0, < 6"
     }
-        kubernetes = {
+    kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "2.4.1"
     }
