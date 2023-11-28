@@ -11,8 +11,8 @@ data "google_container_engine_versions" "gke_version" {
 data "google_client_config" "default" {}
 
 # Create a GKE cluster
-resource "google_container_cluster" "web_service_cluster" {
-  name     = "web-service-cluster"
+resource "google_container_cluster" "web_application_cluster" {
+  name     = "web-application-cluster"
   location = var.region
   remove_default_node_pool = true
   initial_node_count       = 1
@@ -20,10 +20,10 @@ resource "google_container_cluster" "web_service_cluster" {
   subnetwork = google_compute_subnetwork.subnet.name
 }
 
-resource "google_container_node_pool" "web_service_nodes" {
-  name       = google_container_cluster.web_service_cluster.name
+resource "google_container_node_pool" "web_application_cluster_node_pool" {
+  name       = google_container_cluster.web_application_cluster.name
   location   = var.region
-  cluster    = google_container_cluster.web_service_cluster.name
+  cluster    = google_container_cluster.web_application_cluster.name
   version = data.google_container_engine_versions.gke_version.release_channel_latest_version["STABLE"]
   node_count = var.gke_num_nodes
 
@@ -50,11 +50,11 @@ resource "google_container_node_pool" "web_service_nodes" {
   }
 }
 
-resource "kubernetes_deployment" "web_deployment" {
+resource "kubernetes_deployment" "web_application_deployment" {
   metadata {
-    name = "web-deployment"
+    name = "web-application-deployment"
     labels = {
-      App = "web-deployment"
+      App = "web-application-deployment"
     }
   }
 
@@ -62,19 +62,19 @@ resource "kubernetes_deployment" "web_deployment" {
     replicas = 2
     selector {
       match_labels = {
-        App = "web-deployment"
+        App = "web-application-deployment"
       }
     }
     template {
       metadata {
         labels = {
-          App = "web-deployment"
+          App = "web-application-deployment"
         }
       }
       spec {
         container {
           image = "sankalpgunturi/ready:latest"
-          name  = "web-deployment"
+          name  = "web-application-deployment"
 
           port {
             container_port = 80
@@ -96,13 +96,13 @@ resource "kubernetes_deployment" "web_deployment" {
   }
 }
 
-resource "kubernetes_service" "web_service" {
+resource "kubernetes_service" "web_application_service" {
   metadata {
-    name = "web-service"
+    name = "web-application-lb"
   }
   spec {
     selector = {
-      App = kubernetes_deployment.web_deployment.spec.0.template.0.metadata[0].labels.App
+      App = kubernetes_deployment.web_application_deployment.spec.0.template.0.metadata[0].labels.App
     }
     port {
       port        = 80
@@ -114,7 +114,7 @@ resource "kubernetes_service" "web_service" {
 }
 
 provider "kubernetes" {
-  host                   = "https://${google_container_cluster.web_service_cluster.endpoint}"
+  host                   = "https://${google_container_cluster.web_application_cluster.endpoint}"
   token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(google_container_cluster.web_service_cluster.master_auth.0.cluster_ca_certificate)
+  cluster_ca_certificate = base64decode(google_container_cluster.web_application_cluster.master_auth.0.cluster_ca_certificate)
 }
