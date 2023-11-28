@@ -37,5 +37,6 @@ jobs:
       env:
         GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
       run: |
-        gcloud container clusters get-credentials web-application-cluster --project ${{ secrets.GOOGLE_PROJECT_ID }} --zone us-central1-c
+        gcloud container clusters get-credentials web-application-cluster --zone us-central1-c --project ${{ secrets.GOOGLE_PROJECT_ID }}
+        kubectl delete deployment web-application-deployment
         kubectl apply -f config.yml
