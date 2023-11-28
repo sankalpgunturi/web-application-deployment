@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: code checkout
+    - name: Code checkout
       uses: actions/checkout@v2
 
-    - name: install the gcloud cli
+    - name: Install the gcloud cli
       uses: google-github-actions/setup-gcloud@v0
       with:
         project_id: ${{ secrets.NEW_GOOGLE_PROJECT_ID }}
@@ -27,13 +27,13 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}        
 
-    - name: build and push the docker image
+    - name: Build and push the docker image to docker hub
       run: |
         cd api
         docker build -t sankalpgunturi/ready:latest .
         docker push sankalpgunturi/ready:latest
 
-    - name: deploy to gke
+    - name: Deploy to gke
       env:
         GOOGLE_PROJECT_ID: ${{ secrets.NEW_GOOGLE_PROJECT_ID }}
       run: |

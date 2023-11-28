@@ -5,7 +5,7 @@ metadata:
   labels:
     app: web-application-deployment
 spec:
-  replicas: 2
+  replicas: 5
   selector:
     matchLabels:
       app: web-application-deployment
@@ -19,10 +19,8 @@ spec:
         image: sankalpgunturi/ready:latest
         ports:
         - containerPort: 80
-        resources:
-          limits:
-            cpu: "0.5"
-            memory: "512Mi"
-          requests:
-            cpu: "250m"
-            memory: "50Mi"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1

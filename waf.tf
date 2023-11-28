@@ -8,12 +8,13 @@ module "cloud_armor" {
   layer_7_ddos_defense_rule_visibility = "STANDARD"
   log_level                            = "VERBOSE"
 
+  # Add security rules as per your requirements
   security_rules = {
     "deny_all" = {
       action    = "deny(403)"
       priority  = 1
       description = "Deny all requests for DoS protection"
-      src_ip_ranges = ["0.0.0.0/0"]  # Dummy IP range
+      src_ip_ranges = ["0.0.0.0/0"]  # Dummy IP range, since we are using default_action = "deny"
     }
   }
 }
