@@ -4,7 +4,7 @@ variable "gke_num_nodes" {
 }
 
 data "google_container_engine_versions" "gke_version" {
-  location = var.region
+  location = "us-central1-c"
   version_prefix = "1.27."
 }
 
@@ -13,7 +13,7 @@ data "google_client_config" "default" {}
 # Create a GKE cluster
 resource "google_container_cluster" "web_application_cluster" {
   name     = "web-application-cluster"
-  location = var.region
+  location = "us-central1-c"
   remove_default_node_pool = true
   initial_node_count       = 1
   network    = google_compute_network.vpc.name
@@ -22,7 +22,7 @@ resource "google_container_cluster" "web_application_cluster" {
 
 resource "google_container_node_pool" "web_application_cluster_node_pool" {
   name       = google_container_cluster.web_application_cluster.name
-  location   = var.region
+  location   = "us-central1-c"
   cluster    = google_container_cluster.web_application_cluster.name
   version = data.google_container_engine_versions.gke_version.release_channel_latest_version["STABLE"]
   node_count = var.gke_num_nodes
@@ -30,7 +30,7 @@ resource "google_container_node_pool" "web_application_cluster_node_pool" {
   autoscaling {
     min_node_count = 1
     max_node_count = 10
-  }  
+  }
 
   node_config {
     oauth_scopes = [
@@ -50,46 +50,31 @@ resource "google_container_node_pool" "web_application_cluster_node_pool" {
   }
 }
 
+locals {
+  deployment_yaml = file("${path.module}/infra/deployment.yaml")
+  service_yaml    = file("${path.module}/infra/service.yaml")
+
+  decoded_deployment = yamldecode(local.deployment_yaml)
+  decoded_service    = yamldecode(local.service_yaml)
+}
+
 resource "kubernetes_deployment" "web_application_deployment" {
   metadata {
-    name = "web-application-deployment"
-    labels = {
-      App = "web-application-deployment"
-    }
+    name = local.decoded_deployment.metadata.name
   }
-
   spec {
-    replicas = 2
+    replicas = local.decoded_deployment.spec.replicas
     selector {
-      match_labels = {
-        App = "web-application-deployment"
-      }
+      match_labels = local.decoded_deployment.spec.selector.matchLabels
     }
     template {
       metadata {
-        labels = {
-          App = "web-application-deployment"
-        }
+        labels = local.decoded_deployment.spec.template.metadata.labels
       }
       spec {
         container {
-          image = "sankalpgunturi/ready:latest"
-          name  = "web-application-deployment"
-
-          port {
-            container_port = 80
-          }
-
-          resources {
-            limits = {
-              cpu    = "0.5"
-              memory = "512Mi"
-            }
-            requests = {
-              cpu    = "250m"
-              memory = "50Mi"
-            }
-          }
+          image = local.decoded_deployment.spec.template.spec.containers[0].image
+          name  = local.decoded_deployment.spec.template.spec.containers[0].name
         }
       }
     }
@@ -98,18 +83,15 @@ resource "kubernetes_deployment" "web_application_deployment" {
 
 resource "kubernetes_service" "web_application_service" {
   metadata {
-    name = "web-application-lb"
+    name = local.decoded_service.metadata.name
   }
   spec {
-    selector = {
-      App = kubernetes_deployment.web_application_deployment.spec.0.template.0.metadata[0].labels.App
-    }
+    selector = local.decoded_service.spec.selector
     port {
-      port        = 80
-      target_port = 80
+      port        = local.decoded_service.spec.ports[0].port
+      target_port = local.decoded_service.spec.ports[0].targetPort
     }
-
-    type = "LoadBalancer"
+    type = local.decoded_service.spec.type
   }
 }
 

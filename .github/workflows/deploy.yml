@@ -30,7 +30,7 @@ jobs:
     - name: build and push the docker image
       run: |
         cd api
-        docker build -t sankalpgunturi/ready:latest -f Dockerfile .
+        docker build -t sankalpgunturi/ready:latest .
         docker push sankalpgunturi/ready:latest
 
     - name: deploy to gke
