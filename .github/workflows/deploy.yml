@@ -16,8 +16,8 @@ jobs:
     - name: install the gcloud cli
       uses: google-github-actions/setup-gcloud@v0
       with:
-        project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
-        service_account_key: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        project_id: ${{ secrets.NEW_GOOGLE_PROJECT_ID }}
+        service_account_key: ${{ secrets.NEW_GOOGLE_APPLICATION_CREDENTIALS }}
         install_components: 'gke-gcloud-auth-plugin'
         export_default_credentials: true
 
@@ -35,8 +35,9 @@ jobs:
 
     - name: deploy to gke
       env:
-        GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
+        GOOGLE_PROJECT_ID: ${{ secrets.NEW_GOOGLE_PROJECT_ID }}
       run: |
-        gcloud container clusters get-credentials web-application-cluster --zone us-central1-c --project ${{ secrets.GOOGLE_PROJECT_ID }}
+        gcloud container clusters get-credentials web-application-cluster --zone us-central1-c --project ${{ secrets.NEW_GOOGLE_PROJECT_ID }}
         kubectl delete deployment web-application-deployment
-        kubectl apply -f config.yml
+        cd infra
+        kubectl apply -f deployment.yaml
