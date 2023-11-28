@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-application-deployment
+  labels:
+    app: web-application-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-application-deployment
+  template:
+    metadata:
+      labels:
+        app: web-application-deployment
+    spec:
+      containers:
+      - name: web-application-deployment
+        image: sankalpgunturi/ready:latest
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "512Mi"
+          requests:
+            cpu: "250m"
+            memory: "50Mi"
