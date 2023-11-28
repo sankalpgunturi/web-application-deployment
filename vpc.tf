@@ -1,8 +1,10 @@
 variable "project_id" {
+  default = var.project_id
   description = "project id"
 }
 
 variable "region" {
+  default = var.region
   description = "region"
 }
 
