@@ -37,6 +37,6 @@ jobs:
       env:
         GOOGLE_PROJECT_ID: ${{ secrets.GOOGLE_PROJECT_ID }}
       run: |
-        gcloud container clusters get-credentials web-application-cluster --project ${{ secrets.GOOGLE_PROJECT_ID }}
+        gcloud container clusters get-credentials web-application-cluster --project ${{ secrets.GOOGLE_PROJECT_ID }} --zone us-central1-c
         terraform init
         terraform apply -auto-approve
