@@ -4,7 +4,7 @@ variable "gke_num_nodes" {
 }
 
 data "google_container_engine_versions" "gke_version" {
-  location = "us-central1-c"
+  location = var.region
   version_prefix = "1.27."
 }
 
@@ -12,8 +12,9 @@ data "google_client_config" "default" {}
 
 # Create a GKE cluster
 resource "google_container_cluster" "web_application_cluster" {
+  provider = google-beta
   name     = "web-application-cluster"
-  location = "us-central1-c"
+  location = var.region
   remove_default_node_pool = true
   initial_node_count       = 1
   network    = google_compute_network.vpc.name
@@ -22,7 +23,7 @@ resource "google_container_cluster" "web_application_cluster" {
 
 resource "google_container_node_pool" "web_application_cluster_node_pool" {
   name       = google_container_cluster.web_application_cluster.name
-  location   = "us-central1-c"
+  location   = var.region
   cluster    = google_container_cluster.web_application_cluster.name
   version = data.google_container_engine_versions.gke_version.release_channel_latest_version["STABLE"]
   node_count = var.gke_num_nodes
