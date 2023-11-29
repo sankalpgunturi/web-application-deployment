@@ -37,7 +37,7 @@ The architecture is tailored for a web service on the brink of its launch, trans
 
 - It is assumed that the service account key, GCP project ID, Docker username, and Docker password are stored in the environment of the repository. For larger organizations with numerous developers, additional considerations for secure credential management may be necessary.
 
-- A dummy IP is provided in the security rules to illustrate the concept of denying requests in the [waf.tf](waf.tf) file.
+- Malicious IPs were identified and rate limited in [waf.tf](waf.tf) file<sup>[[12]](#12)</sup>.
 
 ### Deployment Strategy
 
@@ -68,7 +68,7 @@ This GitHub Workflow<sup>[[9]](#9)</sup> involves the sequential steps of checki
 #### Security
 - **Need**: To withstand deliberate DoS attacks.
 - **Mechanism**: Integrating Google Cloud Armor and establishing a rudimentary security policy to ensure resilience against Denial of Service (DoS) attacks.
-- **Relevant Implementation**: [waf.tf](waf.tf#L9)
+- **Relevant Implementation**: [waf.tf](waf.tf#L6)
 
 #### Maintainability
 - **Need**: To accommodate periodic service updates with minimal downtime.
@@ -115,16 +115,18 @@ The implementation of these mechanisms collectively ensures the reliability and 
 
 <a id="4">[4]</a> [Getting started with Docker Hub](https://docs.docker.com/get-started/)
 
-<a id="4">[5]</a> [Custom Docker Image I made for this challenge](https://hub.docker.com/repository/docker/sankalpgunturi/ready/general)
+<a id="5">[5]</a> [Custom Docker Image I made for this challenge](https://hub.docker.com/repository/docker/sankalpgunturi/ready/general)
 
-<a id="5">[6]</a> [Introduction to Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/?hl=en)
+<a id="6">[6]</a> [Introduction to Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/?hl=en)
 
-<a id="5">[7]</a> [Introduction to Google Cloud Armor](https://cloud.google.com/security/products/armor?hl=en)
+<a id="7">[7]</a> [Introduction to Google Cloud Armor](https://cloud.google.com/security/products/armor?hl=en)
 
-<a id="6">[8]</a> [Introduction to Google Cloud Load Balancing](https://cloud.google.com/load-balancing?hl=en)
+<a id="8">[8]</a> [Introduction to Google Cloud Load Balancing](https://cloud.google.com/load-balancing?hl=en)
 
-<a id="6">[9]</a> [Introduction to GitHub Actions](https://docs.github.com/en/actions)
+<a id="9">[9]</a> [Introduction to GitHub Actions](https://docs.github.com/en/actions)
 
-<a id="5">[10]</a> [Introduction to Fleet Management in GKE](https://cloud.google.com/anthos/fleet-management/docs/fleet-concepts)
+<a id="10">[10]</a> [Introduction to Fleet Management in GKE](https://cloud.google.com/anthos/fleet-management/docs/fleet-concepts)
 
-<a id="6">[11]</a> [Fleet Management Hands-on](https://cloud.google.com/anthos/fleet-management/docs/register/gke)
+<a id="11">[11]</a> [Fleet Management Hands-on](https://cloud.google.com/anthos/fleet-management/docs/register/gke)
+
+<a id="12">[12]</a> [WAF reference from GCP's official documentation](https://github.com/GoogleCloudPlatform/terraform-google-cloud-armor/blob/c2322be179326f4bd7a23c22f8a2c37db6b68ed9/examples/security-policy-all/main.tf#L100)
