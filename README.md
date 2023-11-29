@@ -33,7 +33,7 @@ The architecture is tailored for a web service on the brink of its launch, trans
 
 - The web service is considered an API-as-a-service and is assumed not to have a domain linked to it. Consequently, GKE's load balancer is expected to generate a public IP for users to utilize.
 
-- Docker Hub is assumed to be the preferred container registry for the company, and the image is hosted at sankalpgunturi/ready<sup>[[4]](#4)</sup>.
+- Docker Hub<sup>[[4]](#4)</sup> is assumed to be the preferred container registry for the company, and the image is hosted at sankalpgunturi/ready<sup>[[5]](#5)</sup>.
 
 - It is assumed that the service account key, GCP project ID, Docker username, and Docker password are stored in the environment of the repository. For larger organizations with numerous developers, additional considerations for secure credential management may be necessary.
 
@@ -41,13 +41,13 @@ The architecture is tailored for a web service on the brink of its launch, trans
 
 ### Deployment Strategy
 
-Establish the infrastructure outlined in the [implementation](#devops-team-setting-up-the-infrastructure) section. A GKE cluster is created in the [designated region](terraform.tfvars#L2), accompanied by custom node pools within the same region. Security policies are defined for all resources associated with the cluster, and a dedicated subnet is generated to facilitate internal resource access. The Kubernetes workload is deployed, leveraging the Docker image specified in the earlier assumptions<sup>[[4]](#4)</sup>.
+Establish the infrastructure outlined in the [implementation](#devops-team-setting-up-the-infrastructure) section. A GKE cluster<sup>[[6]](#6)</sup> is created in the [designated region](terraform.tfvars#L2), accompanied by custom node pools within the same region. Security policies<sup>[[7]](#7)</sup> are defined for all resources associated with the cluster, and a dedicated subnet is generated to facilitate internal resource access. The Kubernetes workload is deployed, leveraging the Docker image specified in the earlier assumptions<sup>[[5]](#5)</sup>.
 
-A load balancer is then instantiated to evenly distribute traffic among the pods, and its external IP serves as the gateway to the API-as-a-Service. 
+A load balancer<sup>[[8]](#8)</sup> is then instantiated to evenly distribute traffic among the pods, and its external IP serves as the gateway to the API-as-a-Service. 
 
 Developers contribute changes to files in the [api](api) directory as outlined [here](#dev-team-pushing-code). During their integration window, when they opt to push changes to the main branch, the [GitHub Workflow](.github/workflows/deploy.yml) is automatically triggered.
 
-This GitHub Workflow involves the sequential steps of checking out the repository, building the Docker image, pushing it to Docker Hub, and orchestrating the K8 deployment update through a delete and redeploy mechanism.
+This GitHub Workflow<sup>[[9]](#9)</sup> involves the sequential steps of checking out the repository, building the Docker image, pushing it to Docker Hub, and orchestrating the K8 deployment update through a delete and redeploy mechanism.
 
 ### Non-Functional Requirements Consideration
 #### Scalability
@@ -104,7 +104,7 @@ The implementation of these mechanisms collectively ensures the reliability and 
 ## Recommendations
 - I believe the existing infrastructure is solid, the Dockerfile does a good job. The use of multi-stage builds is a best practice in Dockerfiles. It allows you to use a larger image with build tools and dependencies during the build phase but produce a smaller image in the final stage that only contains the necessary runtime dependencies and the application code. 
 
-- As an extension to my implementation, I would suggest exploring Fleet Management<sup>[[5]](#5)</sup><sup>[[6]](#6)</sup>, a new addition to GCP's infrastructure. This feature offers the capability to manage multiple GKE clusters and facilitates load balancing between them. Leveraging fleet management becomes particularly advantageous as the user concurrency increases, enhancing the overall reliability of the system.
+- As an extension to my implementation, I would suggest exploring Fleet Management<sup>[[10]](#10)</sup><sup>[[11]](#11)</sup>, a new addition to GCP's infrastructure. This feature offers the capability to manage multiple GKE clusters and facilitates load balancing between them. Leveraging fleet management becomes particularly advantageous as the user concurrency increases, enhancing the overall reliability of the system.
 
 ## References
 <a id="1">[1]</a> [More about GKE Licences](https://cloud.google.com/kubernetes-engine/pricing)
@@ -113,9 +113,18 @@ The implementation of these mechanisms collectively ensures the reliability and 
 
 <a id="3">[3]</a> [More on GCP Machine Resources](https://cloud.google.com/compute/docs/machine-resource)
 
-<a id="4">[4]</a> [Custom Docker Image I made for this challenge](https://hub.docker.com/repository/docker/sankalpgunturi/ready/general)
+<a id="4">[4]</a> [Getting started with Docker Hub](https://docs.docker.com/get-started/)
 
-<a id="5">[5]</a> [Introduction to Fleet Management in GKE](https://cloud.google.com/anthos/fleet-management/docs/fleet-concepts)
+<a id="4">[5]</a> [Custom Docker Image I made for this challenge](https://hub.docker.com/repository/docker/sankalpgunturi/ready/general)
 
-<a id="6">[6]</a> [Fleet Management Hands-on](https://cloud.google.com/anthos/fleet-management/docs/register/gke)
+<a id="5">[6]</a> [Introduction to Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/?hl=en)
 
+<a id="5">[7]</a> [Introduction to Google Cloud Armor](https://cloud.google.com/security/products/armor?hl=en)
+
+<a id="6">[8]</a> [Introduction to Google Cloud Load Balancing](https://cloud.google.com/load-balancing?hl=en)
+
+<a id="6">[9]</a> [Introduction to GitHub Actions](https://docs.github.com/en/actions)
+
+<a id="5">[10]</a> [Introduction to Fleet Management in GKE](https://cloud.google.com/anthos/fleet-management/docs/fleet-concepts)
+
+<a id="6">[11]</a> [Fleet Management Hands-on](https://cloud.google.com/anthos/fleet-management/docs/register/gke)
