@@ -10,7 +10,8 @@
       - [Security](#security)
       - [Maintainability](#maintainability)
   - [Implementation](#implementation)
-    - [How to execute the code?](#how-to-execute-the-code)
+    - [\[DevOps Team\] Setting up the Infrastructure](#devops-team-setting-up-the-infrastructure)
+    - [\[Dev Team\] Pushing code](#dev-team-pushing-code)
   - [Recommendations](#recommendations)
   - [References](#references)
 
@@ -40,11 +41,11 @@ The architecture is tailored for a web service on the brink of its launch, trans
 
 ### Deployment Strategy
 
-The DevOps Team initiates the deployment process by establishing the infrastructure outlined in the [implementation](#how-to-execute-the-code) section. Using Terraform scripts, a GKE cluster is created in the [designated region](terraform.tfvars#L2), accompanied by custom node pools within the same region. Security policies are defined for all resources associated with the cluster, and a dedicated subnet is generated to facilitate internal resource access. The Kubernetes (K8) workload is deployed, leveraging the Docker image specified in the earlier assumptions<sup>[[3]](#3)</sup>.
+Establish the infrastructure outlined in the [implementation](#devops-team-setting-up-the-infrastructure) section. A GKE cluster is created in the [designated region](terraform.tfvars#L2), accompanied by custom node pools within the same region. Security policies are defined for all resources associated with the cluster, and a dedicated subnet is generated to facilitate internal resource access. The Kubernetes (K8) workload is deployed, leveraging the Docker image specified in the earlier assumptions<sup>[[3]](#3)</sup>.
 
 A load balancer is then instantiated to evenly distribute traffic among the pods, and its external IP serves as the gateway to the API-as-a-Service. 
 
-Developers contribute changes to files in the [api](api) directory. During their integration window, when they opt to push changes to the main branch, the [GitHub Workflow](.github/workflows/deploy.yml) is automatically triggered.
+Developers contribute changes to files in the [api](api) directory as outlined [here](#dev-team-pushing-code). During their integration window, when they opt to push changes to the main branch, the [GitHub Workflow](.github/workflows/deploy.yml) is automatically triggered.
 
 This GitHub Workflow involves the sequential steps of checking out the repository, building the Docker image, pushing it to Docker Hub, and orchestrating the K8 deployment update through a delete and redeploy mechanism.
 
@@ -81,7 +82,24 @@ The implementation of these mechanisms collectively ensures the reliability and 
 
 ## Implementation
 
-### How to execute the code?
+### [DevOps Team] Setting up the Infrastructure
+1. Use `gcloud auth application-default login` to authorize and obtain application default credentials for authenticating API requests.
+
+2. Initialize Google Cloud configurations with `gcloud init` to set up the default project, region, and other settings interactively.
+
+3. Execute `terraform init` to initialize the Terraform configuration, downloading necessary providers and modules.
+
+4. Run `terraform plan -out=saved_plan` to generate and save a detailed execution plan, previewing the changes that will be applied.
+
+5. Apply the infrastructure changes using `terraform apply` based on the saved plan, deploying the defined resources and configurations.
+
+### [Dev Team] Pushing code
+1. Modify files within the [api](api) folder to implement desired code changes.
+
+2. Commit the changes using Git, followed by pushing them to the main branch.
+
+3. Monitor the GitHub repository's workflows, to track the progress and outcomes of the automated processes triggered by the code push. It should be all green such as [this](https://github.com/sankalpgunturi/web-application-deployment/actions/runs/7015415535/job/19084704630).
+
 
 ## Recommendations
 - I believe the existing infrastructure is solid, the Dockerfile does a good job- The use of multi-stage builds is a best practice in Dockerfiles. It allows you to use a larger image with build tools and dependencies during the build phase but produce a smaller image in the final stage that only contains the necessary runtime dependencies and the application code. 
