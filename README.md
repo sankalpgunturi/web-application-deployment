@@ -23,7 +23,7 @@ The architecture is tailored for a web service on the brink of its launch, trans
 ### Assumptions
 - The company is presumed to possess a Google Cloud Platform's GKE Enterprise License<sup>[[1]](#1)</sup>, and all the scripts have been implemented accordingly.
   
-- Following the deployment of the GKE cluster, it is assumed that load tests on the Kubernetes (K8) pods have been conducted using standard load testing procedures<sup>[[2]](#2)</sup>. The results indicate that each pod can effectively handle up to 300 concurrent users.
+- Following the deployment of the GKE cluster, it is assumed that load tests on the Kubernetes pods have been conducted using standard load testing procedures<sup>[[2]](#2)</sup>. The results indicate that each pod can effectively handle up to 300 concurrent users.
 
 - In the context of the hypothetical performance testing mentioned above, the choice of `n1-standard-4`<sup>[[3]](#3)</sup> for nodes is assumed to be suitable for accommodating extreme loads, featuring 4 vCPUs and 15GB of memory.
 
@@ -41,7 +41,7 @@ The architecture is tailored for a web service on the brink of its launch, trans
 
 ### Deployment Strategy
 
-Establish the infrastructure outlined in the [implementation](#devops-team-setting-up-the-infrastructure) section. A GKE cluster is created in the [designated region](terraform.tfvars#L2), accompanied by custom node pools within the same region. Security policies are defined for all resources associated with the cluster, and a dedicated subnet is generated to facilitate internal resource access. The Kubernetes (K8) workload is deployed, leveraging the Docker image specified in the earlier assumptions<sup>[[4]](#4)</sup>.
+Establish the infrastructure outlined in the [implementation](#devops-team-setting-up-the-infrastructure) section. A GKE cluster is created in the [designated region](terraform.tfvars#L2), accompanied by custom node pools within the same region. Security policies are defined for all resources associated with the cluster, and a dedicated subnet is generated to facilitate internal resource access. The Kubernetes workload is deployed, leveraging the Docker image specified in the earlier assumptions<sup>[[4]](#4)</sup>.
 
 A load balancer is then instantiated to evenly distribute traffic among the pods, and its external IP serves as the gateway to the API-as-a-Service. 
 
