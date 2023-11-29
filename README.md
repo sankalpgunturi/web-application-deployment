@@ -22,9 +22,9 @@ The architecture is tailored for a web service on the brink of its launch, trans
 ### Assumptions
 - The company is presumed to possess a Google Cloud Platform Enterprise License, and all the scripts have been implemented accordingly.
   
-- Following the deployment of the GKE cluster, it is assumed that load tests on the Kubernetes (K8) pods have been conducted using standard load testing procedures[^1]. The results indicate that each pod can effectively handle up to 300 concurrent users.
+- Following the deployment of the GKE cluster, it is assumed that load tests on the Kubernetes (K8) pods have been conducted using standard load testing procedures[[1]](#1). The results indicate that each pod can effectively handle up to 300 concurrent users.
 
-- In the context of the hypothetical performance testing mentioned above, the choice of `n1-standard-4`[^2] for nodes is assumed to be suitable for accommodating extreme loads, featuring 4 vCPUs and 15GB of memory.
+- In the context of the hypothetical performance testing mentioned above, the choice of `n1-standard-4`[[2]](#2) for nodes is assumed to be suitable for accommodating extreme loads, featuring 4 vCPUs and 15GB of memory.
 
 - It is assumed that a minimum of 3 nodes and a maximum of 10 nodes are necessary to run the application. These values are incorporated into the autoscaling configuration.
 
@@ -32,7 +32,7 @@ The architecture is tailored for a web service on the brink of its launch, trans
 
 - The web service is considered an API-as-a-service and is assumed not to have a domain linked to it. Consequently, GKE's load balancer is expected to generate a public IP for users to utilize.
 
-- Docker Hub is assumed to be the preferred container registry for the company, and the image is hosted at sankalpgunturi/ready[^3].
+- Docker Hub is assumed to be the preferred container registry for the company, and the image is hosted at sankalpgunturi/ready[[3]](#3).
 
 - It is assumed that the service account key, GCP project ID, Docker username, and Docker password are stored in the environment of the repository. For larger organizations with numerous developers, additional considerations for secure credential management may be necessary.
 
@@ -40,7 +40,7 @@ The architecture is tailored for a web service on the brink of its launch, trans
 
 ### Deployment Strategy
 
-The DevOps Team initiates the deployment process by establishing the infrastructure outlined in the [implementation](#how-to-execute-the-code) section. Using Terraform scripts, a GKE cluster is created in the [designated region](terraform.tfvars#L2), accompanied by custom node pools within the same region. Security policies are defined for all resources associated with the cluster, and a dedicated subnet is generated to facilitate internal resource access. The Kubernetes (K8) workload is deployed, leveraging the Docker image specified in the earlier assumptions[^3].
+The DevOps Team initiates the deployment process by establishing the infrastructure outlined in the [implementation](#how-to-execute-the-code) section. Using Terraform scripts, a GKE cluster is created in the [designated region](terraform.tfvars#L2), accompanied by custom node pools within the same region. Security policies are defined for all resources associated with the cluster, and a dedicated subnet is generated to facilitate internal resource access. The Kubernetes (K8) workload is deployed, leveraging the Docker image specified in the earlier assumptions[[3]](#3).
 
 A load balancer is then instantiated to evenly distribute traffic among the pods, and its external IP serves as the gateway to the API-as-a-Service. 
 
@@ -86,6 +86,10 @@ The implementation of these mechanisms collectively ensures the reliability and 
 ## Recommendations
 
 ## References
-[^1] https://speedscale.com/blog/kubernetes-load-testing/
-[^2] https://cloud.google.com/compute/docs/machine-resource
-[^3] https://hub.docker.com/repository/docker/sankalpgunturi/ready/general
+<a id="1">[1]</a> [Standard ways of load testing](https://speedscale.com/blog/kubernetes-load-testing/)
+
+
+<a id="2">[2]</a> [More on GCP Machine Resources](https://cloud.google.com/compute/docs/machine-resource)
+
+
+<a id="3">[3]</a> [Custom Docker Image I made for this challenge](https://hub.docker.com/repository/docker/sankalpgunturi/ready/general)
