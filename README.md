@@ -84,6 +84,13 @@ The implementation of these mechanisms collectively ensures the reliability and 
 ### How to execute the code?
 
 ## Recommendations
+- I believe the existing infrastructure is solid, the Dockerfile does a good job- The use of multi-stage builds is a best practice in Dockerfiles. It allows you to use a larger image with build tools and dependencies during the build phase but produce a smaller image in the final stage that only contains the necessary runtime dependencies and the application code. 
+
+- Google Cloud announced fleet management<sup>[[4]](#4)</sup><sup>[[5]](#5)</sup> this summer. Fleet management can be used to manage multiple GKE clusters and load balance between them. This is especially useful to increase reliability of the system as and when we increase more concurrent users.
+
+- I believe the existing infrastructure is solid, the Dockerfile does a good job. The use of multi-stage builds is a best practice in Dockerfiles. It allows you to use a larger image with build tools and dependencies during the build phase but produce a smaller image in the final stage that only contains the necessary runtime dependencies and the application code. 
+
+- As an extension to my implementation, I would suggest exploring Fleet Management<sup>[[4]](#4)</sup><sup>[[5]](#5)</sup>, a new addition to GCP's infrastructure. This feature offers the capability to manage multiple GKE clusters and facilitates load balancing between them. Leveraging fleet management becomes particularly advantageous as the user concurrency increases, enhancing the overall reliability of the system.
 
 ## References
 <a id="1">[1]</a> [Standard ways of load testing](https://speedscale.com/blog/kubernetes-load-testing/)
@@ -93,3 +100,8 @@ The implementation of these mechanisms collectively ensures the reliability and 
 
 
 <a id="3">[3]</a> [Custom Docker Image I made for this challenge](https://hub.docker.com/repository/docker/sankalpgunturi/ready/general)
+
+<a id="4">[4]</a> [Introduction to Fleet Management in GKE](https://cloud.google.com/anthos/fleet-management/docs/fleet-concepts)
+
+<a id="5">[5]</a> [Fleet Management Hands-on](https://cloud.google.com/anthos/fleet-management/docs/register/gke)
+
